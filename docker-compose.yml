@@ -1,0 +1,177 @@
+version: '3.9'
+
+networks:
+  infra-net:
+
+services:
+  # Airflow stack (reusing airflow-docker/docker-compose.base.yaml)
+  postgres:
+    extends:
+      file: ./airflow-docker/docker-compose.base.yaml
+      service: postgres
+    networks:
+      - infra-net
+
+  redis:
+    extends:
+      file: ./airflow-docker/docker-compose.base.yaml
+      service: redis
+    networks:
+      - infra-net
+
+  airflow-apiserver:
+    extends:
+      file: ./airflow-docker/docker-compose.base.yaml
+      service: airflow-apiserver
+    env_file:
+      - ./airflow-docker/.env
+    volumes:
+      - ./airflow-docker/dags:/opt/airflow/dags
+      - ./airflow-docker/logs:/opt/airflow/logs
+      - ./airflow-docker/config:/opt/airflow/config
+      - ./airflow-docker/plugins:/opt/airflow/plugins
+    networks:
+      - infra-net
+
+  airflow-scheduler:
+    extends:
+      file: ./airflow-docker/docker-compose.base.yaml
+      service: airflow-scheduler
+    env_file:
+      - ./airflow-docker/.env
+    volumes:
+      - ./airflow-docker/dags:/opt/airflow/dags
+      - ./airflow-docker/logs:/opt/airflow/logs
+      - ./airflow-docker/config:/opt/airflow/config
+      - ./airflow-docker/plugins:/opt/airflow/plugins
+    networks:
+      - infra-net
+
+  airflow-dag-processor:
+    extends:
+      file: ./airflow-docker/docker-compose.base.yaml
+      service: airflow-dag-processor
+    env_file:
+      - ./airflow-docker/.env
+    volumes:
+      - ./airflow-docker/dags:/opt/airflow/dags
+      - ./airflow-docker/logs:/opt/airflow/logs
+      - ./airflow-docker/config:/opt/airflow/config
+      - ./airflow-docker/plugins:/opt/airflow/plugins
+    networks:
+      - infra-net
+
+  airflow-worker:
+    extends:
+      file: ./airflow-docker/docker-compose.base.yaml
+      service: airflow-worker
+    env_file:
+      - ./airflow-docker/.env
+    volumes:
+      - ./airflow-docker/dags:/opt/airflow/dags
+      - ./airflow-docker/logs:/opt/airflow/logs
+      - ./airflow-docker/config:/opt/airflow/config
+      - ./airflow-docker/plugins:/opt/airflow/plugins
+    networks:
+      - infra-net
+
+  airflow-triggerer:
+    extends:
+      file: ./airflow-docker/docker-compose.base.yaml
+      service: airflow-triggerer
+    env_file:
+      - ./airflow-docker/.env
+    volumes:
+      - ./airflow-docker/dags:/opt/airflow/dags
+      - ./airflow-docker/logs:/opt/airflow/logs
+      - ./airflow-docker/config:/opt/airflow/config
+      - ./airflow-docker/plugins:/opt/airflow/plugins
+    networks:
+      - infra-net
+
+  airflow-init:
+    extends:
+      file: ./airflow-docker/docker-compose.base.yaml
+      service: airflow-init
+    env_file:
+      - ./airflow-docker/.env
+    volumes:
+      - ./airflow-docker/dags:/opt/airflow/dags
+      - ./airflow-docker/logs:/opt/airflow/logs
+      - ./airflow-docker/config:/opt/airflow/config
+      - ./airflow-docker/plugins:/opt/airflow/plugins
+    networks:
+      - infra-net
+
+  airflow-cli:
+    extends:
+      file: ./airflow-docker/docker-compose.base.yaml
+      service: airflow-cli
+    env_file:
+      - ./airflow-docker/.env
+    volumes:
+      - ./airflow-docker/dags:/opt/airflow/dags
+      - ./airflow-docker/logs:/opt/airflow/logs
+      - ./airflow-docker/config:/opt/airflow/config
+      - ./airflow-docker/plugins:/opt/airflow/plugins
+    networks:
+      - infra-net
+
+  flower:
+    extends:
+      file: ./airflow-docker/docker-compose.base.yaml
+      service: flower
+    env_file:
+      - ./airflow-docker/.env
+    volumes:
+      - ./airflow-docker/dags:/opt/airflow/dags
+      - ./airflow-docker/logs:/opt/airflow/logs
+      - ./airflow-docker/config:/opt/airflow/config
+      - ./airflow-docker/plugins:/opt/airflow/plugins
+    networks:
+      - infra-net
+
+  # Hadoop stack (reusing hadoop-docker/docker-compose.base.yml)
+  namenode:
+    extends:
+      file: ./hadoop-docker/docker-compose.base.yml
+      service: namenode
+    networks:
+      - infra-net
+
+  datanode:
+    extends:
+      file: ./hadoop-docker/docker-compose.base.yml
+      service: datanode
+    networks:
+      - infra-net
+
+  # Kafka stack (reusing kafka-docker/docker-compose.base.yml)
+  zookeeper:
+    extends:
+      file: ./kafka-docker/docker-compose.base.yml
+      service: zookeeper
+    networks:
+      - infra-net
+
+  kafka:
+    extends:
+      file: ./kafka-docker/docker-compose.base.yml
+      service: kafka
+    networks:
+      - infra-net
+
+  # Spark stack (reusing spark-docker/docker-compose.base.yml)
+  spark-master:
+    extends:
+      file: ./spark-docker/docker-compose.base.yml
+      service: spark-master
+    networks:
+      - infra-net
+
+  spark-worker:
+    extends:
+      file: ./spark-docker/docker-compose.base.yml
+      service: spark-worker
+    networks:
+      - infra-net
